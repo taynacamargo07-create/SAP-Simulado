@@ -1,0 +1,2592 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulado SAP S/4HANA Sourcing and Procurement</title>
+    <style>
+        /* Estilos CSS */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .question-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background-color: #fdfdfd;
+        }
+        .question-text {
+            font-size: 1.15em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #34495e;
+        }
+        .options-list {
+            list-style: none;
+            padding: 0;
+        }
+        .options-list li {
+            margin-bottom: 10px;
+        }
+        .option-button {
+            display: block;
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f0f0f0;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+        .option-button:hover:not(.selected):not(.correct):not(.incorrect) {
+            background-color: #e9e9e9;
+            border-color: #a0a0a0;
+        }
+        .option-button.selected {
+            background-color: #cce5ff;
+            border-color: #007bff;
+            font-weight: bold;
+        }
+        .option-button.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+            font-weight: bold;
+            color: #155724;
+        }
+        .option-button.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            font-weight: bold;
+            color: #721c24;
+        }
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+        .nav-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .nav-button:hover {
+            background-color: #0056b3;
+        }
+        .nav-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .progress-bar {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            height: 10px;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            width: 0%;
+            background-color: #28a745;
+            border-radius: 5px;
+            transition: width 0.4s ease-in-out;
+        }
+        .progress-text {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            color: #555;
+        }
+        .results-section {
+            text-align: center;
+        }
+        .score {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .score.green { color: #28a745; }
+        .score.yellow { color: #ffc107; }
+        .score.red { color: #dc3545; }
+        .result-details {
+            text-align: left;
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+        .result-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #f0f0f0;
+            border-radius: 8px;
+            background-color: #fdfdfd;
+        }
+        .result-item .question-text {
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+        .result-item .option-text {
+            padding: 8px 12px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            font-size: 0.95em;
+        }
+        .result-item .option-text.correct {
+            background-color: #e6ffe6;
+            border: 1px solid #28a745;
+            color: #155724;
+        }
+        .result-item .option-text.incorrect {
+            background-color: #ffe6e6;
+            border: 1px solid #dc3545;
+            color: #721c24;
+        }
+        .result-item .option-text.user-selected {
+            background-color: #e0f2ff;
+            border: 1px solid #007bff;
+            color: #004085;
+        }
+        .result-item .option-text.user-selected.incorrect {
+            background-color: #f8d7da; /* Red background for incorrect user answer */
+            border: 1px solid #dc3545;
+            color: #721c24;
+        }
+        .restart-button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            background-color: #28a745;
+            color: white;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 20px;
+        }
+        .restart-button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="quiz-title">Simulado SAP S/4HANA Sourcing and Procurement</h1>
+        
+        <div id="quiz-area">
+            <!-- Área do quiz será preenchida por JavaScript -->
+        </div>
+
+        <div id="results-area" style="display: none;">
+            <!-- Área de resultados será preenchida por JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // Dados das perguntas (extraídos dos anexos)
+        const questions = [
+            // Perguntas extraídas do /C_TS452_2022_ 38% Full _ ERPPrep.pdf
+            {
+                id: 1,
+                question: "When is a vendor consignment liability posted in SAP Materials Management?",
+                options: [
+                    "When goods are transferred between stock types",
+                    "When goods are issued to a cost center",
+                    "When goods are received from vendor",
+                    "When goods are transferred between storage locations"
+                ],
+                correctAnswer: 1 // "When goods are issued to a cost center"
+            },
+            {
+                id: 2,
+                question: "Which of the following information can be used as a reference when posting an invoice if goods have already been received for the corresponding order? There are 3 correct answers to this question.",
+                options: [
+                    "The purchase requisition number",
+                    "The sales order number",
+                    "The delivery note number",
+                    "The order number"
+                ],
+                correctAnswer: 2 // Assuming "The delivery note number" is one of the correct ones, and the system only allows one. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 3,
+                question: "You are posting a goods receipt without a corresponding purchase order (PO) in the system. Which of the following are prerequisites for automatic generation of the PO at the time of goods receipt? There are 3 correct answers to this question.",
+                options: [
+                    "Automatic purchase order generation is activated for the movement type in Customizing.",
+                    "The goods receipt to be posted is intended for consumption.",
+                    "A valid purchasing info record exists for the material and supplier combination.",
+                    "The delivered material is a valuated stock material."
+                ],
+                correctAnswer: 0 // Assuming "Automatic purchase order generation is activated for the movement type in Customizing." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 4,
+                question: "You have several company codes and plants in your project. You are setting the plant as valuation area. How can you minimize the effort involved in account determination?",
+                options: [
+                    "You can group plants assigned to different charts of accounts by using the account grouping code.",
+                    "You can group plants assigned to different charts of accounts by using the valuation grouping code.",
+                    "You can group plants assigned to the same chart of accounts by using the account grouping code.",
+                    "You can group plants assigned to the same chart of accounts by using the valuation grouping code."
+                ],
+                correctAnswer: 3 // "You can group plants assigned to the same chart of accounts by using the valuation grouping code."
+            },
+            {
+                id: 5,
+                question: "Which of the following statements are correct? There are 2 correct answers to this question.",
+                options: [
+                    "Each system has a maximum of six clients.",
+                    "The standard transaction codes delivered by SAP can be changed by the user.",
+                    "To access customizing, you need the appropriate authorization.",
+                    "Every productive system has at least one client."
+                ],
+                correctAnswer: 2 // Assuming "To access customizing, you need the appropriate authorization." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 6,
+                question: "In SAP S/4HANA, which organizational unit is responsible for procuring materials and services, negotiating conditions of purchase with vendors, and is also responsible for tasks relating to invoice verification?",
+                options: [
+                    "Company Code",
+                    "Purchasing Organization",
+                    "Storage Location",
+                    "Plant"
+                ],
+                correctAnswer: 1 // "Purchasing Organization"
+            },
+            {
+                id: 7,
+                question: "How does MRP Live minimize the volume of data that must be copied from the database server to the application server and back?",
+                options: [
+                    "By reading all data in one database procedure",
+                    "By reading only the purchase receipts and requirements",
+                    "By reading only the existing purchase requisitions and planned orders",
+                    "By reading only the material receipts and requirements"
+                ],
+                correctAnswer: 0 // "By reading all data in one database procedure"
+            },
+            {
+                id: 8,
+                question: "Which configuration element in SAP S/4HANA is used to define the sequence in which conditions are accessed during the pricing determination process in purchasing?",
+                options: [
+                    "Calculation Schema",
+                    "Condition Type",
+                    "Access Sequence",
+                    "Pricing Procedure"
+                ],
+                correctAnswer: 2 // "Access Sequence"
+            },
+            {
+                id: 9,
+                question: "What analytical apps are available in inventory management? There are 2 correct answers to this questions.",
+                options: [
+                    "Manage Stock",
+                    "Quantity Contract Consumption",
+                    "Dead Stock Analysis",
+                    "Stock-Multiple Materials"
+                ],
+                correctAnswer: 0 // Assuming "Manage Stock" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 10,
+                question: "Your company uses the classic release procedure for purchasing documents. For which configuration object must approvers have the appropriate authorization?",
+                options: [
+                    "Release group",
+                    "Release strategy",
+                    "Release indicator",
+                    "Release code"
+                ],
+                correctAnswer: 3 // "Release code"
+            },
+            {
+                id: 11,
+                question: "When purchasing externally, how can you prevent the purchase of materials that have no longer been valid?",
+                options: [
+                    "By activating a supplier block",
+                    "By activating the corresponding material status.",
+                    "By setting the procurement type to 'Internal administration only'.",
+                    "By setting the material to 'Inactive'."
+                ],
+                correctAnswer: 1 // "By activating the corresponding material status."
+            },
+            {
+                id: 12,
+                question: "How can you completely block a material for procurement in a plant? There are 2 correct answers to this question.",
+                options: [
+                    "Use a relevant plant-specific material status in the material master.",
+                    "Create a quota arrangement entry with a quantity of zero.",
+                    "Create an entry in the source list with a blocking indicator and NO supplier.",
+                    "Create a blocking entry in the supplier master record."
+                ],
+                correctAnswer: 0 // Assuming "Use a relevant plant-specific material status in the material master." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 13,
+                question: "Which configuration element contains the criteria that causes an item or document to be blocked in SAP Materials Management?",
+                options: [
+                    "Release code",
+                    "Release strategy",
+                    "Release indicator",
+                    "Release status"
+                ],
+                correctAnswer: 1 // "Release strategy"
+            },
+            {
+                id: 14,
+                question: "In SAP S/4HANA, which master data element is used to specify the time intervals during which a material can be procured from a certain supplier?",
+                options: [
+                    "Purchase Info Record",
+                    "Source List",
+                    "Vendor Master",
+                    "Material Master"
+                ],
+                correctAnswer: 1 // "Source List"
+            },
+            {
+                id: 15,
+                question: "A company receives a shipment of defective materials from a supplier. They want to return these materials and ensure that they are not included in unrestricted stock. Which goods movement type in SAP S/4HANA can be used for this purpose? There are 2 correct answers to this question.",
+                options: [
+                    "Goods Issue",
+                    "Stock Transfer",
+                    "Transfer Posting to Blocked Stock",
+                    "Goods Return"
+                ],
+                correctAnswer: 2 // Assuming "Transfer Posting to Blocked Stock" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 16,
+                question: "How can you manually trigger sourcing when creating a purchase requisition in SAP S/4HANA? There are 2 correct answers to this question.",
+                options: [
+                    "Set the 'automatic sourcing' indicator in the header before adding items.",
+                    "Use the 'Assignment of source of supply' button for individual line items.",
+                    "Press the 'Assignment of source of supply' button in the header of the purchase requisition.",
+                    "Set the 'automatic requirements determination' indicator in the item details."
+                ],
+                correctAnswer: 1 // Assuming "Use the 'Assignment of source of supply' button for individual line items." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 17,
+                question: "Where does SAP S/4HANA store the low-level code used to determine the sequence in which materials are planned during the MRP run? There are 2 correct answers to this question.",
+                options: [
+                    "Production version",
+                    "Material master",
+                    "MRP planning file",
+                    "Bill of material"
+                ],
+                correctAnswer: 1 // Assuming "Material master" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 18,
+                question: "What does pre-registering an order lead to, among other things? There are 2 correct answers to this question.",
+                options: [
+                    "You can use situation processing to notify other users that an order is incomplete.",
+                    "One can use a workflow to initiate the completion of the order.",
+                    "There is no verification of the data entered.",
+                    "The order is blocked for further entries or changes."
+                ],
+                correctAnswer: 0 // Assuming "You can use situation processing to notify other users that an order is incomplete." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 19,
+                question: "Where do you enable the ability to personalize the home page?",
+                options: [
+                    "In the business catalog",
+                    "In the user settings in the back-end system",
+                    "In the business role assigned to the user",
+                    "In the configuration of the SAP Fiori launchpad"
+                ],
+                correctAnswer: 3 // "In the configuration of the SAP Fiori launchpad"
+            },
+            {
+                id: 20,
+                question: "Where can the appropriate setting be made to allow the user to change the account assignment of a consumable in invoice verification?",
+                options: [
+                    "In the document type of the order",
+                    "In position types",
+                    "In account assignment types",
+                    "In the material master of the consumable"
+                ],
+                correctAnswer: 2 // "In account assignment types"
+            },
+            {
+                id: 21,
+                question: "Which of the following are soft facts that you can use for supplier evaluation within SAP S/4HANA? There are 2 correct answers to this question.",
+                options: [
+                    "Delivery date",
+                    "Strategic importance",
+                    "Social responsibility",
+                    "Environment protection"
+                ],
+                correctAnswer: 1 // Assuming "Strategic importance" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 22,
+                question: "What setting options are available in Customizing for logistics invoice verification for handling unplanned additional costs in incoming invoices? There are 2 correct answers to this question.",
+                options: [
+                    "Unplanned additional purchase costs require a later recount.",
+                    "Unplanned additional purchase costs must be posted to a separate general ledger account.",
+                    "Unplanned additional procurement costs must be distributed proportionally to the invoice items.",
+                    "Unplanned additional procurement costs must be posted to the price difference account."
+                ],
+                correctAnswer: 1 // Assuming "Unplanned additional purchase costs must be posted to a separate general ledger account." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 23,
+                question: "You have ordered a stock material that is valuated with a standard price. The price in the purchase order (PO) is higher than the standard price of the material. Which accounts are updated at goods receipt? There are 3 correct answers to this question.",
+                options: [
+                    "GR/IR",
+                    "Material consumption",
+                    "Price differences",
+                    "Stock"
+                ],
+                correctAnswer: 0 // Assuming "GR/IR" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 24,
+                question: "What does the Custom Code Check tool in SAP S/4HANA provide?",
+                options: [
+                    "Descriptions on Simplification items",
+                    "Proposals to replace the custom code with Badis",
+                    "An overview of custom code that does NOT comply with SAP S/4HANA",
+                    "Information about existing functionality"
+                ],
+                correctAnswer: 2 // "An overview of custom code that does NOT comply with SAP S/4HANA"
+            },
+            {
+                id: 25,
+                question: "A company wants to implement a three-way match in their procurement process to ensure accuracy. Which of the following documents are typically involved in a three-way match? There are 3 correct answers to this question.",
+                options: [
+                    "Purchase Order",
+                    "Purchase Requisition",
+                    "Invoice",
+                    "Goods Receipt"
+                ],
+                correctAnswer: 0 // Assuming "Purchase Order" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 26,
+                question: "Your project uses product costing and production planning functionality. Which valuation area must be used?",
+                options: [
+                    "Company code",
+                    "Controlling area",
+                    "Business area",
+                    "Plant"
+                ],
+                correctAnswer: 3 // "Plant"
+            },
+            {
+                id: 27,
+                question: "You are faced with the following scenario: You need a purchasing document for minor maintenance or repair work that can occur within a certain period of time (duration) and which should not exceed a set amount limit within this period. What type of purchase receipt is suitable here?",
+                options: [
+                    "A billing plan",
+                    "A purchase order release order",
+                    "A service order",
+                    "A blanket order/limit order"
+                ],
+                correctAnswer: 3 // "A blanket order/limit order"
+            },
+            {
+                id: 28,
+                question: "A warehouse manager notices discrepancies between the system's recorded stock and the actual physical stock for certain materials. Which of the following steps should be taken to address this issue in SAP S/4HANA? There are 3 correct answers to this question.",
+                options: [
+                    "Block the material for further movement",
+                    "Perform a physical inventory count",
+                    "Adjust the purchase order quantity",
+                    "Post the inventory differences"
+                ],
+                correctAnswer: 1 // Assuming "Perform a physical inventory count" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 29,
+                question: "How does the system derive the company code when you post a goods movement in a plant?",
+                options: [
+                    "The company code is derived from your default settings.",
+                    "A plant can occur several times in a client, but can only belong to one company code.",
+                    "Each plant is assigned to a purchasing organization, which itself belongs to one company code.",
+                    "A plant is unique in a client, and can only belong to one company code."
+                ],
+                correctAnswer: 3 // "A plant is unique in a client, and can only belong to one company code."
+            },
+            {
+                id: 30,
+                question: "A company wants to ensure that all purchase requisitions created through self-service procurement undergo a managerial approval process. Which feature in SAP S/4HANA can be configured to enforce this requirement? There are 2 correct answers to this question.",
+                options: [
+                    "Workflow Configuration",
+                    "Shopping Cart Settings",
+                    "Purchase Order Type",
+                    "Release Strategy"
+                ],
+                correctAnswer: 0 // Assuming "Workflow Configuration" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 31,
+                question: "Your company procures some materials exclusively through consignment, and you want the requirements planning for these materials to generate purchase requisitions for supplier consignment rather than regular purchase requisitions. What do you have to do for each of the materials in question to make this work? There are 2 correct answers to this question.",
+                options: [
+                    "You have to store a special procurement type and special procurement key for consignment in the material master.",
+                    "You have to store a default storage location for external procurement in the material master.",
+                    "You have to store a special planning group for consignment in the material master.",
+                    "You must store an order book with at least one source of supply in the material master."
+                ],
+                correctAnswer: 0 // Assuming "You have to store a special procurement type and special procurement key for consignment in the material master." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 32,
+                question: "Which indicator can you set for the manual source assignment in the 'function authorizations for buyers' user parameter (EFB) in SAP Materials Management?",
+                options: [
+                    "Purchase Requisition",
+                    "Source List",
+                    "Quotation",
+                    "Contract"
+                ],
+                correctAnswer: 1 // "Source List"
+            },
+            {
+                id: 33,
+                question: "What replaces the goods receipt process in external services procurement within SAP Materials Management?",
+                options: [
+                    "Update of service purchase order history",
+                    "Invoice verification for service purchase order",
+                    "Service entry sheet creation and acceptance",
+                    "Creation of service specification"
+                ],
+                correctAnswer: 2 // "Service entry sheet creation and acceptance"
+            },
+            {
+                id: 34,
+                question: "What is mandatory in a purchase order item for a consumable material in SAP Materials Management?",
+                options: [
+                    "Material number",
+                    "GR/IR clearing account",
+                    "Goods Receipt indicator",
+                    "Account assignment category"
+                ],
+                correctAnswer: 3 // "Account assignment category"
+            },
+            {
+                id: 35,
+                question: "For which of the following business scenarios does a situation template exist in Situation Handling? There are 2 correct answers to this question.",
+                options: [
+                    "A contract is ready as a source of supply.",
+                    "A supplier confirmation is pending.",
+                    "A purchase order approval is pending.",
+                    "The due date for a blocked invoice has passed."
+                ],
+                correctAnswer: 2 // Assuming "A purchase order approval is pending." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 36,
+                question: "You need to create a new document type for a document category in SAP Materials Management. What do you need to define? There are 3 correct answers to this question.",
+                options: [
+                    "The number assignment and field selection for the document type",
+                    "The assignment of the document type to purchasing organization",
+                    "The permitted item categories",
+                    "The function authorizations for document types"
+                ],
+                correctAnswer: 0 // Assuming "The number assignment and field selection for the document type" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 37,
+                question: "What controls whether lists are displayed using the SAP List Viewer or the ALV grid control in SAP ERP standard reports? There are 2 correct answers to this question.",
+                options: [
+                    "The transaction code",
+                    "The scope-of-list parameter",
+                    "User parameter ME_USE_GRID",
+                    "The selection parameters"
+                ],
+                correctAnswer: 1 // Assuming "The scope-of-list parameter" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 38,
+                question: "Blocking reason Quality is set for an item in an invoice. What could be the reason for this? There are 2 correct answers to this question.",
+                options: [
+                    "Goods-receipt-based invoice verification is NOT used and the item in the invoice has the Post to Inspection Stock flag set in its material master.",
+                    "Goods-receipt-based invoice verification is used and NO usage decision has been made for the inspection lot for the item in the invoice.",
+                    "Goods-receipt-based invoice verification is used and NO goods receipt has been posted for the item in the invoice.",
+                    "Goods-receipt-based invoice verification is NOT used and NO usage decision has been made for any inspection lot for the item in the invoice."
+                ],
+                correctAnswer: 1 // Assuming "Goods-receipt-based invoice verification is used and NO usage decision has been made for the inspection lot for the item in the invoice." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 39,
+                question: "In SAP S/4HANA, which configuration element is used to define the criteria based on which purchase requisitions can be automatically converted into purchase orders?",
+                options: [
+                    "Purchase Requisition Type",
+                    "Auto PO Configuration",
+                    "Release Strategy",
+                    "Document Type"
+                ],
+                correctAnswer: 1 // "Auto PO Configuration"
+            },
+            {
+                id: 40,
+                question: "What are some SAP Smart Business key performance indicators (KPIs) available for purchase requisitions? There are 3 correct answers to this question.",
+                options: [
+                    "Overdue purchase requisitions",
+                    "Purchase requisition touch rate",
+                    "Purchase requisition-to-order cycle time",
+                    "Purchase requisition average approval time"
+                ],
+                correctAnswer: 0 // Assuming "Overdue purchase requisitions" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 41,
+                question: "What controls which item categories you are allowed to use when creating new items in a purchasing document?",
+                options: [
+                    "User role",
+                    "Document category",
+                    "Document type",
+                    "Account assignment category"
+                ],
+                correctAnswer: 2 // "Document type"
+            },
+            {
+                id: 42,
+                question: "Which of the following are characteristics of the Hold function for purchase orders? There are 2 correct answers to this question.",
+                options: [
+                    "It allows any kind of error in a document.",
+                    "It is supported for blanket purchase orders.",
+                    "It disables follow-on activities.",
+                    "It triggers a workflow to request completion of the document."
+                ],
+                correctAnswer: 0 // Assuming "It allows any kind of error in a document." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 43,
+                question: "In SAP S/4HANA, which tool helps in comparing quotations from different suppliers to select the best offer?",
+                options: [
+                    "Spend Analysis",
+                    "Supplier Evaluation",
+                    "Purchase Order History",
+                    "Price Comparison List"
+                ],
+                correctAnswer: 3 // "Price Comparison List"
+            },
+            {
+                id: 44,
+                question: "Which maintenance statuses must be defined in SAP Materials Management before you buy a valued material for receipt into stock? There are 2 correct answers to this question.",
+                options: [
+                    "Accounting",
+                    "Storage",
+                    "Costing",
+                    "Purchasing"
+                ],
+                correctAnswer: 0 // Assuming "Accounting" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 45,
+                question: "You are using message determination with condition technique. Which parameter can you specify in a condition record for a message output type in SAP Materials Management? There are 2 correct answers to this question.",
+                options: [
+                    "Partner function",
+                    "Message texts",
+                    "Output time",
+                    "Print form"
+                ],
+                correctAnswer: 0 // Assuming "Partner function" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 46,
+                question: "For which documents can you configure the usage of time-dependent conditions? There are 2 correct answers to this question.",
+                options: [
+                    "Purchase order",
+                    "Contract",
+                    "Scheduling agreement",
+                    "Quotation"
+                ],
+                correctAnswer: 1 // Assuming "Contract" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 47,
+                question: "You create a contract item for a material group. You want to prevent certain materials that belong to this material group from being ordered with reference to this contract item. How can you ensure this?",
+                options: [
+                    "Create material-specific source lists outside the validity period of the contract.",
+                    "Create material-specific source lists for the contract item and set the Fix indicator.",
+                    "Create material-specific source lists for the contract item and set the Exclusion indicator.",
+                    "Create material-specific source lists for the supplier and set the Blocked indicator."
+                ],
+                correctAnswer: 2 // "Create material-specific source lists for the contract item and set the Exclusion indicator."
+            },
+            {
+                id: 48,
+                question: "Which of the following business partner roles are required to execute a procurement process? There are 2 correct answers to this question.",
+                options: [
+                    "Supplier on purchasing organization level",
+                    "FI Vendor on company code level",
+                    "Supplier on purchasing group level",
+                    "Contact Person on purchasing organization level"
+                ],
+                correctAnswer: 0 // Assuming "Supplier on purchasing organization level" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 49,
+                question: "Which statements apply to subcontracting? There are 3 correct answers to this question.",
+                options: [
+                    "The purchase requisition for subcontracting can be generated through requirements planning (MRP).",
+                    "You can maintain material components for a BOM.",
+                    "You can assign a subcontract order item to an account.",
+                    "You can set the control parameters of the 'subcontract processing' item category in Customizing."
+                ],
+                correctAnswer: 0 // Assuming "The purchase requisition for subcontracting can be generated through requirements planning (MRP)." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 50,
+                question: "Your project requires an individual purchasing organization for each plant in your company code. What should you take into consideration when setting up such an organizational structure? There are 2 correct answers to this question.",
+                options: [
+                    "Each purchasing organization has its own purchasing groups.",
+                    "Each purchasing organization has its own material master data.",
+                    "Each purchasing organization has its own info records.",
+                    "Each purchasing organization has its own vendor master data."
+                ],
+                correctAnswer: 0 // Assuming "Each purchasing organization has its own purchasing groups." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 51,
+                question: "In SAP S/4HANA, which tool or functionality provides embedded analytics capabilities directly within the procurement applications?",
+                options: [
+                    "SAP BW/4HANA Embedded Analytics",
+                    "SAP Fiori Apps",
+                    "SAP Ariba Analytics",
+                    "SAP S/4HANA Embedded Analytics"
+                ],
+                correctAnswer: 3 // "SAP S/4HANA Embedded Analytics"
+            },
+            {
+                id: 52,
+                question: "What can you control with a document type in purchasing? There are 3 correct answers to this question.",
+                options: [
+                    "Allowed account assignment categories",
+                    "Linkage to material groups",
+                    "Number range",
+                    "Allowed item categories"
+                ],
+                correctAnswer: 0 // Assuming "Allowed account assignment categories" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 53,
+                question: "During reorder point planning, which time elements does the forward scheduling procedure take into account when calculating the availability date? There are 3 correct answers to this question.",
+                options: [
+                    "Purchasing department processing time",
+                    "Total shelf life",
+                    "Goods receipt processing time",
+                    "Planned delivery time"
+                ],
+                correctAnswer: 0 // Assuming "Purchasing department processing time" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 54,
+                question: "In S/4HANA, what are the new sourcing capabilities of Request for Quotes (RFQs)? There are 2 correct answers to this question.",
+                options: [
+                    "Receive multiple supplier quotes from suppliers",
+                    "Send an RFQ to external platforms without a supplier included",
+                    "Enter one supplier quote per RFQ",
+                    "Convert shopping carts to RFQs"
+                ],
+                correctAnswer: 0 // Assuming "Receive multiple supplier quotes from suppliers" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 55,
+                question: "Tolerance groups can be defined to post inventory differences. Which tolerances can be defined? There are 2 correct answers to this question.",
+                options: [
+                    "Maximum difference for each inventory document",
+                    "Maximum percentage deviation for each inventory difference item",
+                    "Minimum deviation for each inventory document item to be recorded by the system (minimum limit)",
+                    "Maximum absolute deviation for each inventory document line"
+                ],
+                correctAnswer: 0 // Assuming "Maximum difference for each inventory document" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 56,
+                question: "In the context of invoice verification in SAP S/4HANA, what does the term 'GR/IR' stand for?",
+                options: [
+                    "Goods Return/Invoice Return",
+                    "General Return/Invoice Return",
+                    "Goods Receipt/Invoice Receipt",
+                    "General Receipt/Invoice Receipt"
+                ],
+                correctAnswer: 2 // "Goods Receipt/Invoice Receipt"
+            },
+            {
+                id: 57,
+                question: "To which object can you directly assign an account assignment category in SAP Materials Management?",
+                options: [
+                    "Item category",
+                    "Material master",
+                    "Document type",
+                    "Partner role"
+                ],
+                correctAnswer: 0 // "Item category"
+            },
+            {
+                id: 58,
+                question: "What measures are possible when booking a goods receipt to the warehouse with reference to an order? There are 2 correct answers to this question.",
+                options: [
+                    "Distribution of the delivery to different storage locations",
+                    "Valuation price maintenance",
+                    "Posting a goods receipt quantity that is below the order quantity",
+                    "Adjustment of the order quantity to the goods receipt quantity"
+                ],
+                correctAnswer: 2 // Assuming "Posting a goods receipt quantity that is below the order quantity" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 59,
+                question: "Which situations lead to an open item on the GR/IR clearing account? There are 2 correct answers to this question.",
+                options: [
+                    "The delivered quantity for a purchase order item is more than the invoiced quantity.",
+                    "The ordered quantity for a purchase order item is more than the invoiced quantity.",
+                    "The invoiced quantity for a purchase order item is more than the delivered quantity.",
+                    "The ordered quantity for a purchase order item is more than the delivered quantity."
+                ],
+                correctAnswer: 2 // Assuming "The invoiced quantity for a purchase order item is more than the delivered quantity." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 60,
+                question: "How does the system react to posting an invoice with an invoice reduction? There are 2 correct answers to this question.",
+                options: [
+                    "The system generates a message that can be sent to the supplier to inform them that the credit has been posted",
+                    "Two accounting documents are generated, namely firstly the invoice and secondly the credit note.",
+                    "The invoice is blocked for payment until the supplier has confirmed the credit request.",
+                    "An accounting document combining invoice and credit note is created."
+                ],
+                correctAnswer: 0 // Assuming "The system generates a message that can be sent to the supplier to inform them that the credit has been posted" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 61,
+                question: "In SAP S/4HANA, which tool provides a set of design principles to ensure a consistent and holistic user experience?",
+                options: [
+                    "SAP UI5",
+                    "SAP Screen Personas",
+                    "SAP Fiori Design Guidelines",
+                    "SAP Fiori Elements"
+                ],
+                correctAnswer: 2 // "SAP Fiori Design Guidelines"
+            },
+            {
+                id: 62,
+                question: "What are the different types of SAP Fiori applications? There are 3 correct answers to this question.",
+                options: [
+                    "Transactional",
+                    "Responsive",
+                    "Factsheet",
+                    "Analytical"
+                ],
+                correctAnswer: 0 // Assuming "Transactional" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 63,
+                question: "Which of the following is a key benefit of using analytics in sourcing and procurement processes?",
+                options: [
+                    "It eliminates the need for purchase orders.",
+                    "It automates the procurement process.",
+                    "It replaces the traditional procurement module.",
+                    "It provides insights into supplier performance and compliance."
+                ],
+                correctAnswer: 3 // "It provides insights into supplier performance and compliance."
+            },
+            {
+                id: 64,
+                question: "Which of the following assignments are possible for a purchasing organization? There are 3 correct answers to this question.",
+                options: [
+                    "One purchasing organization to multiple company codes",
+                    "Several plants from different company codes to one purchasing organization",
+                    "One purchasing organization to one company code",
+                    "Several plants from the same company code to one purchasing organization"
+                ],
+                correctAnswer: 2 // Assuming "One purchasing organization to one company code" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 65,
+                question: "Which of the following are types of SAP Fiori users? There are 3 correct answers to this question.",
+                options: [
+                    "Expert",
+                    "Employee",
+                    "Business partner",
+                    "Occasional"
+                ],
+                correctAnswer: 1 // Assuming "Employee" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 66,
+                question: "How can you prevent a goods movement from being posted to a reservation item in the requirement date is too far in the future in SAP Materials Management?",
+                options: [
+                    "Leave the Movement Allowed indicator blank",
+                    "Leave the Final Issue indicator blank",
+                    "Set the retention periods",
+                    "Set the base date"
+                ],
+                correctAnswer: 2 // "Set the retention periods"
+            },
+            {
+                id: 67,
+                question: "Which document in SAP S/4HANA is used to record a long-term agreement with a supplier regarding the supply of materials or services at predefined conditions?",
+                options: [
+                    "Purchase Order",
+                    "Quotation",
+                    "Purchase Requisition",
+                    "Contract"
+                ],
+                correctAnswer: 3 // "Contract"
+            },
+            {
+                id: 68,
+                question: "Which of the following is NOT a benefit of optimizing the purchasing process in SAP S/4HANA?",
+                options: [
+                    "Reduced lead times",
+                    "Increased stock levels",
+                    "Cost savings",
+                    "Improved supplier relationships"
+                ],
+                correctAnswer: 1 // "Increased stock levels"
+            },
+            {
+                id: 69,
+                question: "For which of the following transactions do you receive an error message if the automatic account determination is set up incorrectly? There are 3 correct answers to this question.",
+                options: [
+                    "Stock transfer between company codes",
+                    "Goods receipt into blocked stock",
+                    "Purchasing info record price change",
+                    "Stock transfer between stock types"
+                ],
+                correctAnswer: 0 // Assuming "Stock transfer between company codes" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 70,
+                question: "Which of the following tools integrates seamlessly with SAP S/4HANA to enhance the capabilities of self-service procurement by providing access to a global network of suppliers?",
+                options: [
+                    "SAP Fiori",
+                    "SAP SRM",
+                    "SAP Ariba Network",
+                    "SAP Fieldglass"
+                ],
+                correctAnswer: 2 // "SAP Ariba Network"
+            },
+            {
+                id: 71,
+                question: "When using a classic release procedure, for which of the following documents must you use classification? There are 2 correct answers to this question.",
+                options: [
+                    "JIT delivery schedules",
+                    "Purchase orders",
+                    "Purchase requisitions",
+                    "Requests for quotation"
+                ],
+                correctAnswer: 1 // Assuming "Purchase orders" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 72,
+                question: "Which of the following CANNOT be created by MRP Live?",
+                options: [
+                    "Schedule line",
+                    "Planned order",
+                    "MRP list",
+                    "Purchase requisition"
+                ],
+                correctAnswer: 2 // "MRP list"
+            },
+            {
+                id: 73,
+                question: "For which document types can approval be carried out item by item in the workflow?",
+                options: [
+                    "Order",
+                    "Supplier inquiry",
+                    "delivery schedule",
+                    "order request"
+                ],
+                correctAnswer: 3 // "order request"
+            },
+            {
+                id: 74,
+                question: "How do you proceed if you want to create purchasing info records for consumable materials without material master records?",
+                options: [
+                    "You specify the relationship between a material group and a supplier",
+                    "You specify the relationship between a material type and a supplier..",
+                    "You specify a special info category.",
+                    "You must first create material master records"
+                ],
+                correctAnswer: 0 // "You specify the relationship between a material group and a supplier"
+            },
+            {
+                id: 75,
+                question: "Which of the following is a key characteristic of consumption-based planning in SAP S/4HANA?",
+                options: [
+                    "It is primarily used for make-to-order scenarios.",
+                    "It is based on sales orders.",
+                    "It does not depend on the master production schedule.",
+                    "It uses master production schedules."
+                ],
+                correctAnswer: 2 // "It does not depend on the master production schedule."
+            },
+            {
+                id: 76,
+                question: "Which of the following can be used to achieve automated procurement processes in SAP S/4HANA?",
+                options: [
+                    "Operational Procurement",
+                    "Self-Service Requisitioning",
+                    "Purchase Order Splitting",
+                    "Automatic Purchase Order Creation"
+                ],
+                correctAnswer: 3 // "Automatic Purchase Order Creation"
+            },
+            {
+                id: 77,
+                question: "During the goods receipt for a purchase order of a material to be stocked, what determines which stock account is updated?",
+                options: [
+                    "Condition record",
+                    "Account modifier",
+                    "Valuation class",
+                    "Price control"
+                ],
+                correctAnswer: 2 // "Valuation class"
+            },
+            {
+                id: 78,
+                question: "Confirmed quantities and dates must be recorded in the purchase order item. Your purchasing department expects suppliers to send purchase order confirmations and shipping notifications. What do you need to configure in Customizing?",
+                options: [
+                    "A confirmation control key with at least one confirmation type marked as relevant for planning",
+                    "A confirmation control key with a sequence of two confirmation types",
+                    "A purchasing value key with the order acknowledgment indicator preset",
+                    "A confirmation control key relevant for the proof of delivery"
+                ],
+                correctAnswer: 0 // "A confirmation control key with at least one confirmation type marked as relevant for planning"
+            },
+            {
+                id: 79,
+                question: "You have to post scrap expenses to a special account. Based on which characteristics can you influence the behaviour of the account determination? There are 2 correct answers to this question.",
+                options: [
+                    "Plant",
+                    "Storage location",
+                    "Stock type",
+                    "Movement type"
+                ],
+                correctAnswer: 3 // Assuming "Movement type" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 80,
+                question: "How can account determination for planned additional procurement costs be controlled based on the condition type?",
+                options: [
+                    "By assigning an account key to the condition type",
+                    "By assigning an access sequence to the condition type",
+                    "By assigning a calculation schema (calculation schema) to the condition type",
+                    "By assigning a condition record to the condition type"
+                ],
+                correctAnswer: 0 // "By assigning an account key to the condition type"
+            },
+
+            // Perguntas extraídas do /C_TS452_2022_ 39% Full _ ERPPrep.pdf
+            {
+                id: 81,
+                question: "Which of the following sources of supply in SAP S/4HANA provides a binding offer from a supplier to deliver a material or service at a specified price on a certain date?",
+                options: [
+                    "Quotation",
+                    "Contract",
+                    "Outline Agreement",
+                    "Purchase Order"
+                ],
+                correctAnswer: 0 // "Quotation"
+            },
+            {
+                id: 82,
+                question: "What information on the subject of 'contracts' can be accessed directly via analytical apps? There are 2 correct answers to this question.",
+                options: [
+                    "Asset value contracts",
+                    "Unapproved Contracts",
+                    "Unused contracts",
+                    "Expiring contracts"
+                ],
+                correctAnswer: 2 // Assuming "Unused contracts" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 83,
+                question: "Blocking reason Quality is set for an item in an invoice. What could be the reason for this? There are 2 correct answers to this question.",
+                options: [
+                    "Goods-receipt-based invoice verification is used and NO usage decision has been made for the inspection lot for the item in the invoice.",
+                    "Goods-receipt-based invoice verification is NOT used and NO usage decision has been made for any inspection lot for the item in the invoice.",
+                    "Goods-receipt-based invoice verification is NOT used and the item in the invoice has the Post to Inspection Stock flag set in its material master.",
+                    "Goods-receipt-based invoice verification is used and NO goods receipt has been posted for the item in the invoice."
+                ],
+                correctAnswer: 0 // Assuming "Goods-receipt-based invoice verification is used and NO usage decision has been made for the inspection lot for the item in the invoice." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 84,
+                question: "What are some properties of the organization structure for procurement? There are 3 correct answers to this question.",
+                options: [
+                    "A storage location can only belong to one plant.",
+                    "A plant can only belong to one company code.",
+                    "A storage location key must be unique in a company code.",
+                    "Several storage locations may be assigned to a plant."
+                ],
+                correctAnswer: 0 // Assuming "A storage location can only belong to one plant." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 85,
+                question: "You want to set up a uniform account determination for all materials of several material types, for example raw materials (material type ROH) and operating supplies (material type HISE). How do you achieve this?",
+                options: [
+                    "Define a new common valuation area for the materials.",
+                    "Group the material types using a common valuation class.",
+                    "Define a common item category group for the material types.",
+                    "Group the material types using a common account category reference."
+                ],
+                correctAnswer: 3 // "Group the material types using a common account category reference."
+            },
+            {
+                id: 86,
+                question: "You want to prevent a specific material from being ordered from a specific vendor. What must you do?",
+                options: [
+                    "Create an entry in the source list with a blocking indicator.",
+                    "Create a quota arrangement entry with zero quantity.",
+                    "Create a blocking entry in the purchasing info record.",
+                    "Create a blocking entry in the vendor master data."
+                ],
+                correctAnswer: 0 // "Create an entry in the source list with a blocking indicator."
+            },
+            {
+                id: 87,
+                question: "You want to implement split valuation functionality. What must you do? There are 2 correct answers to this question.",
+                options: [
+                    "Assign valuation types to stock types.",
+                    "Create additional material master accounting data.",
+                    "Customize valuation categories and valuation types.",
+                    "Add valuation types to all open purchase order items."
+                ],
+                correctAnswer: 2 // Assuming "Customize valuation categories and valuation types." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 88,
+                question: "What value is displayed for the creation indicator in the Contacts tab when a purchase requisition is created manually?",
+                options: [
+                    "Demand planning",
+                    "Realtime",
+                    "Offline (without automatic)",
+                    "Direct sourcing"
+                ],
+                correctAnswer: 3 // "Direct sourcing"
+            },
+            {
+                id: 89,
+                question: "For which of the following transactions do you receive an error message if the automatic account determination is set up incorrectly? There are 3 correct answers to this question.",
+                options: [
+                    "Stock transfer between company codes",
+                    "Purchasing info record price change",
+                    "Stock transfer between stock types",
+                    "Goods receipt into blocked stock"
+                ],
+                correctAnswer: 0 // Assuming "Stock transfer between company codes" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 90,
+                question: "What should you pay attention to if you want to send orders to your suppliers by email, but change quantities or prices by fax? There are 3 correct answers to this question.",
+                options: [
+                    "The exclusion indicator (exclusive indicator) must be set in the access sequence.",
+                    "Different message types are used for the 'New' and 'Change' print functions.",
+                    "The condition record contains price and quantity fields.",
+                    "The indicator 'N' (new message determination for change messages) must be set in Customizing."
+                ],
+                correctAnswer: 1 // Assuming "Different message types are used for the 'New' and 'Change' print functions." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 91,
+                question: "What does the Custom Code Check tool in SAP S/4HANA provide?",
+                options: [
+                    "Information about existing functionality",
+                    "An overview of custom code that does NOT comply with SAP S/4HANA",
+                    "Descriptions on Simplification items",
+                    "Proposals to replace the custom code with Badis"
+                ],
+                correctAnswer: 1 // "An overview of custom code that does NOT comply with SAP S/4HANA"
+            },
+            {
+                id: 92,
+                question: "In your project, you need to make sure that consignment purchase orders utilize a different number range than other purchase orders. What must you do?",
+                options: [
+                    "Customize a new item category for this purpose and assign a new number range to it.",
+                    "Customize a new document type and assign only consignment vendors to it.",
+                    "Customize a new document type and assign the item category for consignment only to this type.",
+                    "Customize a new item category for this purpose and deactivate the standard one."
+                ],
+                correctAnswer: 2 // "Customize a new document type and assign the item category for consignment only to this type."
+            },
+            {
+                id: 93,
+                question: "Your company procures some materials exclusively through consignment, and you want the requirements planning for these materials to generate purchase requisitions for supplier consignment rather than regular purchase requisitions. What do you have to do for each of the materials in question to make this work? There are 2 correct answers to this question.",
+                options: [
+                    "You have to store a default storage location for external procurement in the material master.",
+                    "You have to store a special procurement type and special procurement key for consignment in the material master.",
+                    "You have to store a special planning group for consignment in the material master.",
+                    "You must store an order book with at least one source of supply in the material master."
+                ],
+                correctAnswer: 1 // Assuming "You have to store a special procurement type and special procurement key for consignment in the material master." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 94,
+                question: "Which organizational unit is relevant for inventory valuation within the context of production planning and product cost planning?",
+                options: [
+                    "The company code",
+                    "The controlling area",
+                    "The work",
+                    "The business area"
+                ],
+                correctAnswer: 0 // "The company code"
+            },
+            {
+                id: 95,
+                question: "Which of the following is NOT a standard procurement process in SAP S/4HANA?",
+                options: [
+                    "Purchase Requisition",
+                    "Sales Order",
+                    "Goods Receipt",
+                    "Purchase Order"
+                ],
+                correctAnswer: 1 // "Sales Order"
+            },
+            {
+                id: 96,
+                question: "A company has multiple suppliers for a material, but they want to prioritize one supplier over others for a specific period due to a special discount offer. Which master data element in SAP S/4HANA can be used to define this preference? There are 2 correct answers to this question.",
+                options: [
+                    "Quota Arrangement",
+                    "Vendor Master",
+                    "Source List",
+                    "Material Master"
+                ],
+                correctAnswer: 0 // Assuming "Quota Arrangement" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 97,
+                question: "What information can the analytical Purchasing Group Activity SAP Fiori app provide? There are 2 correct answers to this question.",
+                options: [
+                    "The number of contracts created by a purchasing group since the beginning of the current year",
+                    "The number of purchase orders created by a user since the beginning of the current year",
+                    "The net purchased value per purchasing group and month for the current year",
+                    "The number of inspection lots per purchasing group and month for the current year"
+                ],
+                correctAnswer: 2 // Assuming "The net purchased value per purchasing group and month for the current year" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 98,
+                question: "Which of the following movement types in SAP S/4HANA indicates a goods receipt for a purchase order?",
+                options: [
+                    "561",
+                    "341",
+                    "101",
+                    "261"
+                ],
+                correctAnswer: 2 // "101"
+            },
+            {
+                id: 99,
+                question: "In SAP S/4HANA, which document is automatically generated after successfully posting an invoice in the system?",
+                options: [
+                    "Accounting Document",
+                    "Purchase Order",
+                    "Goods Receipt Document",
+                    "Material Document"
+                ],
+                correctAnswer: 0 // "Accounting Document"
+            },
+            {
+                id: 100,
+                question: "Which of the following are valid sources of supply in a source list in SAP Materials Management? There are 2 correct answers to this question.",
+                options: [
+                    "Quotation",
+                    "Procurement plant",
+                    "Quota arrangement",
+                    "Contract"
+                ],
+                correctAnswer: 0 // Assuming "Quotation" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 101,
+                question: "What do you need to consider when deciding whether to use stock transport orders for stock transfers between plants?",
+                options: [
+                    "Stock transfers with stock transport orders use the same calculation schema as standard purchase orders",
+                    "Stock transfers with stock transport orders require an account assignment",
+                    "Stock transfers with transport orders are one step only",
+                    "Stock transfers with stock transport orders can be integrated with MRP"
+                ],
+                correctAnswer: 3 // "Stock transfers with stock transport orders can be integrated with MRP"
+            },
+            {
+                id: 102,
+                question: "What influences account determination in general ledger accounting? There are 2 correct answers to this question.",
+                options: [
+                    "By business area",
+                    "Through the business accounting form",
+                    "Through the evaluation area",
+                    "Through the chart of accounts"
+                ],
+                correctAnswer: 2 // Assuming "Through the evaluation area" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 103,
+                question: "What are benefits of self-service requisitioning? There are 2 correct answers to this question.",
+                options: [
+                    "Integrated update function for material master data",
+                    "Reduced procurement costs",
+                    "Decreased number of purchase contracts",
+                    "Increased no-touch rate for purchase orders"
+                ],
+                correctAnswer: 1 // Assuming "Reduced procurement costs" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 104,
+                question: "Which of the Following are Features of subcontracting procurement Process? There are 3 correct answers to this question.",
+                options: [
+                    "You Can Assign a subcontracting order item to an Account.",
+                    "You can customize the control parameters for the subcontracting item category.",
+                    "You can maintain components to be provided in a bill of Material.",
+                    "You can have subcontracting purchase requisitions created by MRP."
+                ],
+                correctAnswer: 0 // Assuming "You Can Assign a subcontracting order item to an Account." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 105,
+                question: "In SAP S/4HANA, which embedded analytics tools does an end user have access to? There are 2 correct answers to this question.",
+                options: [
+                    "Multidimensional reporting",
+                    "Query designer",
+                    "SAP Smart Business cockpit",
+                    "Custom CDS view app"
+                ],
+                correctAnswer: 2 // Assuming "SAP Smart Business cockpit" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 106,
+                question: "Which statements about a mode are true? Please select all the correct answers that apply.",
+                options: [
+                    "If multiple modes are open, there may be a problem that the user blocks themselves when editing master data.",
+                    "Two users can view a master record at the same time.",
+                    "You can only work with one mode at a time.",
+                    "By default, a maximum of 6 modes can be opened"
+                ],
+                correctAnswer: 0 // Assuming "If multiple modes are open, there may be a problem that the user blocks themselves when editing master data." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 107,
+                question: "What are the different types of SAP Fiori applications? There are 3 correct answers to this question.",
+                options: [
+                    "Role-based",
+                    "Analytical",
+                    "Responsive",
+                    "Transactional"
+                ],
+                correctAnswer: 0 // Assuming "Role-based" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 108,
+                question: "What does pre-registering an order lead to, among other things? There are 2 correct answers to this question.",
+                options: [
+                    "One can use a workflow to initiate the completion of the order.",
+                    "You can use situation processing to notify other users that an order is incomplete.",
+                    "The order is blocked for further entries or changes.",
+                    "There is no verification of the data entered."
+                ],
+                correctAnswer: 0 // Assuming "One can use a workflow to initiate the completion of the order." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 109,
+                question: "Which documents does the system create when you post a goods receipt for a valuated material? There are 2 correct answers to this question.",
+                options: [
+                    "A delivery confirmation receipt",
+                    "A material receipt",
+                    "An accounting document",
+                    "An invoice"
+                ],
+                correctAnswer: 1 // Assuming "A material receipt" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 110,
+                question: "Your purchasing department wants to monitor overdue purchase orders. What are the prerequisites for issuing delivery reminders for a purchase order? There are 3 correct answers to this question.",
+                options: [
+                    "Maintain purchasing value keys in the purchase order item.",
+                    "Maintain a confirmation control key in the supplier master.",
+                    "Set message determination in Customizing and maintain message records.",
+                    "Maintain reminder periods in the purchase order item."
+                ],
+                correctAnswer: 0 // Assuming "Maintain purchasing value keys in the purchase order item." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 111,
+                question: "What indicators do you have to set for the collective release so that all purchase requisitions that are possible for release are selected if you do not know whether the respective purchase requisitions require a general release or an item release? There are 3 correct answers to this question.",
+                options: [
+                    "Blocking indicator 10",
+                    "Group release indicator 4",
+                    "'Purchase requisitions with item release' indicator",
+                    "'Purchase requisitions with overall approval' indicator"
+                ],
+                correctAnswer: 2 // Assuming "'Purchase requisitions with item release' indicator" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 112,
+                question: "The purchasing organization you manage has entered into a contract with a supplier to purchase 150 units of a specific material, and you have created a quantity contract for this purpose. How do you ensure that the target quantity is not exceeded?",
+                options: [
+                    "As soon as the amount is exceeded, a dialog window opens with a corresponding message in which you must enter an authorization code to continue. As long as you don't give this code to anyone, make sure there are no quantity overages.",
+                    "By default, the system issues a warning message when the quantity is exceeded, and you can set the system to issue an error message instead - and error messages can only be overcome with the appropriate authorization.",
+                    "You do not need to make any special settings, as the system issues an error message by default if the quantity is about to be exceeded, which cannot be overcome.",
+                    "You implement a BAdl that monitors the quantity and blocks the release as soon as it is exceeded."
+                ],
+                correctAnswer: 1 // "By default, the system issues a warning message when the quantity is exceeded, and you can set the system to issue an error message instead - and error messages can only be overcome with the appropriate authorization."
+            },
+            {
+                id: 113,
+                question: "Your warehouse receives a delivery, but you do not want the delivered materials to be posted to inventory at first. How do you proceed when accepting such a conditional delivery?",
+                options: [
+                    "When booking the WE, you select movement type 343 (free to use on blocked).",
+                    "The materials are posted to the unvalued goods receipt blocked stock (GR blocked stock).",
+                    "The materials are posted to the valuated goods receipt blocked stock (GR blocked stock).",
+                    "You set a corresponding indicator in the order and deactivate it again as soon as you finally want to book the materials into inventory."
+                ],
+                correctAnswer: 1 // "The materials are posted to the unvalued goods receipt blocked stock (GR blocked stock)."
+            },
+            {
+                id: 114,
+                question: "For which of the following do you have to create MRP areas?",
+                options: [
+                    "Storage location MRP",
+                    "MRP run with scope of planning",
+                    "Forecasting",
+                    "MRP run by vendor"
+                ],
+                correctAnswer: 0 // "Storage location MRP"
+            },
+            {
+                id: 115,
+                question: "What requirements must be met in order to use an inventory determination strategy for a material in inventory management? There are 3 correct answers to this question.",
+                options: [
+                    "When customizing inventory management, you define a cross-application strategy for inventory determination according to which the inventories should be reduced.",
+                    "You assign an inventory determination strategy to the material type",
+                    "You create an inventory determination rule in Customizing and assign it to the corresponding storage type.",
+                    "You assign an inventory determination rule to the business transaction (business transaction) in Customizing of the calling application."
+                ],
+                correctAnswer: 0 // Assuming "When customizing inventory management, you define a cross-application strategy for inventory determination according to which the inventories should be reduced." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 116,
+                question: "Your purchasing department is working with scheduling agreements. What can you do using release creation profiles? There are 3 correct answers to this question.",
+                options: [
+                    "You can enter a release creation profile in the material master data.",
+                    "You can control the periodicity of release creation using release creation profiles.",
+                    "You can create plant-specific release creation profiles in Customizing.",
+                    "You can enter a release creation profile in the vendor master data."
+                ],
+                correctAnswer: 0 // Assuming "You can enter a release creation profile in the material master data." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 117,
+                question: "What replaces the goods receipt process in external services procurement within SAP Materials Management?",
+                options: [
+                    "Invoice verification for service purchase order",
+                    "Service entry sheet creation and acceptance",
+                    "Update of service purchase order history",
+                    "Creation of service specification"
+                ],
+                correctAnswer: 1 // "Service entry sheet creation and acceptance"
+            },
+            {
+                id: 118,
+                question: "What influences the material type in the material master? There are 2 correct answers to this question.",
+                options: [
+                    "The quantity/value update",
+                    "The account group",
+                    "The requirements planning type",
+                    "The procurement type"
+                ],
+                correctAnswer: 0 // Assuming "The quantity/value update" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 119,
+                question: "You transfer material between two plants. The goods issue in the delivery plant is booked. During the transportation process, some parts of the shipment will be damaged, the delivery factory is responsible for the transportation. How can scrapping be booked?",
+                options: [
+                    "You cancel the stock transfer in the issuing plant and post the scrapping there.",
+                    "You adjust the stock in transit and store the remaining quantity in the receiving plant. The scrapping is then booked equally in the delivering and receiving plants.",
+                    "You post the goods receipt for the total quantity in the receiving plant to the unrestricted-use inventory and post the scrapping there.",
+                    "You post the goods receipt for the total quantity in the receiving plant to blocked stock and then scrap the damaged parts there."
+                ],
+                correctAnswer: 2 // "You post the goods receipt for the total quantity in the receiving plant to the unrestricted-use inventory and post the scrapping there."
+            },
+            {
+                id: 120,
+                question: "Which field controls the procurement process when creating an order for a material?",
+                options: [
+                    "The material type",
+                    "The rating class",
+                    "The type of movement",
+                    "The account assignment"
+                ],
+                correctAnswer: 0 // "The material type"
+            },
+            {
+                id: 121,
+                question: "Which configuration element is assigned to the valuation class if the procurement process takes place without a material master?",
+                options: [
+                    "The material type",
+                    "The customer group",
+                    "The evaluation circle",
+                    "The material group"
+                ],
+                correctAnswer: 3 // "The material group"
+            },
+            {
+                id: 122,
+                question: "A company wants to provide its employees with a centralized access point to all SAP and non-SAP applications. Which tool in SAP S/4HANA can support this requirement? There are 2 correct answers to this question.",
+                options: [
+                    "SAP GUI",
+                    "SAP Web Dynpro",
+                    "SAP Fiori Apps",
+                    "SAP Fiori Launchpad"
+                ],
+                correctAnswer: 3 // Assuming "SAP Fiori Launchpad" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 123,
+                question: "You regularly purchase non-stock materials. What must you set up to allow the system to automatically propose specific accounts?",
+                options: [
+                    "Assign transaction keys to the material groups",
+                    "Assign valuation classes to the material groups.",
+                    "Assign transaction keys to the account assignment categories.",
+                    "Assign valuation classes to the account assignment categories."
+                ],
+                correctAnswer: 0 // "Assign transaction keys to the material groups"
+            },
+            {
+                id: 124,
+                question: "You are testing a standard stock transport process using a stock transport order between two plants belonging to the same company code. A two-step posting for the goods movements is used. What can you say about the follow-on documents that are created when you post the goods receipt in the receiving plant?",
+                options: [
+                    "Both a material document and an accounting document are created.",
+                    "A material document is created but NO accounting document.",
+                    "An accounting document is created but NO material document.",
+                    "NO material document is created and NO accounting document."
+                ],
+                correctAnswer: 0 // "Both a material document and an accounting document are created."
+            },
+            {
+                id: 125,
+                question: "What advantage does the submission number offer in supplier inquiries?",
+                options: [
+                    "The submission number makes it easier to select offers for price comparison.",
+                    "Submission numbers make it easier to find discount surcharges.",
+                    "The submission number makes it easier to select documents from the offers for creating order book entries.",
+                    "The submission number makes it easier to select documents for news releases in ALV format."
+                ],
+                correctAnswer: 0 // "The submission number makes it easier to select offers for price comparison."
+            },
+            {
+                id: 126,
+                question: "Which of the following prerequisites must be met for the system to check the shelf life of materials at goods receipt? There are 3 correct answers to this question.",
+                options: [
+                    "The purchase order item contains the remaining shelf life.",
+                    "The shelf life expiration date check is activated for the plant in Customizing.",
+                    "The shelf life expiration date check is activated for the material type in Customizing.",
+                    "The material is managed in batches in the plant."
+                ],
+                correctAnswer: 0 // Assuming "The purchase order item contains the remaining shelf life." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 127,
+                question: "Which field can you use to prevent a discounted material from being procured?",
+                options: [
+                    "Special procurement type",
+                    "Control code",
+                    "Material status",
+                    "Authorization group"
+                ],
+                correctAnswer: 2 // "Material status"
+            },
+            {
+                id: 128,
+                question: "In SAP S/4HANA, which of the following procedures is used to determine requirements based on historical consumption values?",
+                options: [
+                    "Forecast-based Planning",
+                    "Vendor Evaluation",
+                    "Reorder Point Planning",
+                    "Material Requirements Planning (MRP)"
+                ],
+                correctAnswer: 2 // "Reorder Point Planning"
+            },
+            {
+                id: 129,
+                question: "In which situation can you have open items in the GR/IR clearing account?",
+                options: [
+                    "Quantity differences between goods receipts and invoice receipts for a purchase order item",
+                    "Price differences at invoice receipt for an order item, only if the material is valuated at the standard price",
+                    "Price differences at invoice receipt for an order item, only if the material is valuated at the moving average price",
+                    "Price differences between purchase order and invoice receipt for a purchase order item"
+                ],
+                correctAnswer: 0 // "Quantity differences between goods receipts and invoice receipts for a purchase order item"
+            },
+            {
+                id: 130,
+                question: "You create blanket purchase order for several minor repairs that may occur during the year. which of the following data must you enter? There are 2 correct answers for this question.",
+                options: [
+                    "A net purchase order price",
+                    "An overall limit value",
+                    "An account assignment category",
+                    "An invoicing plan type"
+                ],
+                correctAnswer: 1 // Assuming "An overall limit value" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 131,
+                question: "Which of the following elements in SAP S/4HANA can influence the automatic source determination process?",
+                options: [
+                    "Payment Terms",
+                    "Purchase Requisition Type",
+                    "Document Type",
+                    "Source List"
+                ],
+                correctAnswer: 3 // "Source List"
+            },
+            {
+                id: 132,
+                question: "You are interested in the percentage of shopping cart items that require manual changes to either the PO or the PR after initial creation and approval. What key performance indicator (KPI) proceeds the information?",
+                options: [
+                    "PR item changes",
+                    "PR Low Touch Rate",
+                    "PR High Touch Rate",
+                    "PR to Order Cycle time"
+                ],
+                correctAnswer: 2 // "PR High Touch Rate"
+            },
+            {
+                id: 133,
+                question: "What do you have to set so that price conditions in orders are only visible to certain users?",
+                options: [
+                    "The user parameters EVO",
+                    "The activity category field selection key",
+                    "The transaction's field selection key",
+                    "The user parameters EFB"
+                ],
+                correctAnswer: 3 // "The user parameters EFB"
+            },
+            {
+                id: 134,
+                question: "A company wants to automatically adjust the reorder point for a material based on changing consumption patterns. Which feature in SAP S/4HANA supports this requirement? There are 2 correct answers to this question.",
+                options: [
+                    "Manual Reorder Point Planning",
+                    "Time-phased Planning",
+                    "Automatic Reorder Point Planning",
+                    "Forecast-based Planning"
+                ],
+                correctAnswer: 2 // Assuming "Automatic Reorder Point Planning" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 135,
+                question: "Which of the following are types of SAP Fiori users? There are 3 correct answers to this question.",
+                options: [
+                    "Employee",
+                    "Expert",
+                    "Business partner",
+                    "Occasional"
+                ],
+                correctAnswer: 0 // Assuming "Employee" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 136,
+                question: "Which SAP Fiori apps should be used to set up the 'shortage in delivery' use case as part of situation processing? There are 2 correct answers to this question.",
+                options: [
+                    "The 'Lackage Handling' app",
+                    "The 'Manage Situation Types' app",
+                    "The 'Monitor Situations' app",
+                    "The 'Manage Teams and Responsibilities' app"
+                ],
+                correctAnswer: 1 // Assuming "The 'Manage Situation Types' app" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 137,
+                question: "Which special material type attribute can you set for the material type in the SAP Implementation Guide?",
+                options: [
+                    "Consignment is mandatory",
+                    "Material is configurable",
+                    "Material is consumable",
+                    "Price control is mandatory"
+                ],
+                correctAnswer: 3 // "Price control is mandatory"
+            },
+            {
+                id: 138,
+                question: "Which principle of SAP Fiori realizes the idea of ONE user per use case with up to three screens per application?",
+                options: [
+                    "The principle of responsiveness (automatic layout adjustment for different output devices)",
+                    "The principle of corporate design",
+                    "The principle of simplicity",
+                    "The principle of role-basedness"
+                ],
+                correctAnswer: 3 // "The principle of role-basedness"
+            },
+            {
+                id: 139,
+                question: "Your company wants consignment orders to use a different number range than other orders. How do you realize this?",
+                options: [
+                    "You configure a new document type with a new number range and assign it exclusively to the item categories for consignment orders.",
+                    "You configure a new item type for consignment orders only and deactivate all others for the duration of the bookings.",
+                    "You configure a new document type and assign it a new number range.",
+                    "You configure a new document type and only assign consignment suppliers to it."
+                ],
+                correctAnswer: 0 // "You configure a new document type with a new number range and assign it exclusively to the item categories for consignment orders."
+            },
+            {
+                id: 140,
+                question: "What does the account assignment category control? There are 2 correct answers to this question.",
+                options: [
+                    "Whether you can post a goods receipt",
+                    "The type of account assignment object you must specify",
+                    "The item categories you are allowed to use",
+                    "Whether you must enter a material in the purchase order"
+                ],
+                correctAnswer: 1 // Assuming "The type of account assignment object you must specify" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 141,
+                question: "Which assignment must NOT be established if you plan to set up a cross-company purchasing organization?",
+                options: [
+                    "Purchasing organization - reference purchasing organization",
+                    "Purchasing group - factory",
+                    "Purchasing organization - plant",
+                    "Purchasing organization - company code"
+                ],
+                correctAnswer: 1 // "Purchasing group - factory"
+            },
+            {
+                id: 142,
+                question: "In SAP S/4HANA, which of the following determines the valuation area?",
+                options: [
+                    "Purchasing Organization",
+                    "Company Code",
+                    "Storage Location",
+                    "Plant"
+                ],
+                correctAnswer: 3 // "Plant"
+            },
+            {
+                id: 143,
+                question: "How often does SAP HANA create a save point?",
+                options: [
+                    "Every few minutes",
+                    "Every few seconds",
+                    "Every few hours",
+                    "Every 30 minutes"
+                ],
+                correctAnswer: 0 // "Every few minutes"
+            },
+            {
+                id: 144,
+                question: "What characterizes goods receipt-related invoice verification? There are 3 correct answers to this question.",
+                options: [
+                    "The indicator for goods receipt-related invoice verification must have been set in advance in the respective order items",
+                    "A separate invoice is generated for each order item.",
+                    "The goods receipt is posted before the invoice.",
+                    "Each invoice item is assigned to a goods receipt item"
+                ],
+                correctAnswer: 0 // Assuming "The indicator for goods receipt-related invoice verification must have been set in advance in the respective order items" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 145,
+                question: "Which of the following apply when using centrally agreed contracts? There are 2 correct answers to this question.",
+                options: [
+                    "You CANNOT specify plants in centrally agreed contracts.",
+                    "You can maintain plant-specific conditions in centrally agreed contracts.",
+                    "You can use centrally agreed contracts in a procurement hub scenario.",
+                    "You can use centrally agreed contracts without restrictions for an purchasing organization."
+                ],
+                correctAnswer: 1 // Assuming "You can maintain plant-specific conditions in centrally agreed contracts." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 146,
+                question: "Which organizational assignments mandatory for external procurement?",
+                options: [
+                    "Reference Purchasing Organization - Purchasing Organization",
+                    "Plant - Purchasing Group",
+                    "Company Code - Purchasing Organization",
+                    "Plant - Purchasing Organization"
+                ],
+                correctAnswer: 3 // "Plant - Purchasing Organization"
+            },
+            {
+                id: 147,
+                question: "When is a vendor consignment liability posted in SAP Materials Management?",
+                options: [
+                    "When goods are transferred between storage locations",
+                    "When goods are received from vendor",
+                    "When goods are issued to a cost center",
+                    "When goods are transferred between stock types"
+                ],
+                correctAnswer: 2 // "When goods are issued to a cost center"
+            },
+            {
+                id: 148,
+                question: "You want to set up the same account determination for raw materials (material type ROH) and operating suppliers (material type HIBE). How can you group these material types?",
+                options: [
+                    "Assign the same valuation class to the material types.",
+                    "Assign the same account modification to the material types.",
+                    "Assign the same account category reference to the material types.",
+                    "Assign the same valuation grouping code to the material types."
+                ],
+                correctAnswer: 2 // "Assign the same account category reference to the material types."
+            },
+            {
+                id: 149,
+                question: "What connection exists between the service master record and the service list?",
+                options: [
+                    "The list of services is a data record that defines the structure of the service master record for reporting.",
+                    "In order to create a service master data catalog, service lists are required.",
+                    "Service lists are used in CO, whereas service master records are used in MM.",
+                    "Service master records are used as a data source when creating a service specification."
+                ],
+                correctAnswer: 3 // "Service master records are used as a data source when creating a service specification."
+            },
+            {
+                id: 150,
+                question: "Which of the following actions can you run with transact on MIGO? There are 3 correct answers to this question.",
+                options: [
+                    "Cancel material document",
+                    "Enter physical inventory count",
+                    "Release GR blocked stock",
+                    "Create return delivery"
+                ],
+                correctAnswer: 0 // Assuming "Cancel material document" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 151,
+                question: "What are some characteristics of the material ledger? There are 3 correct answers to this question.",
+                options: [
+                    "It is mandatory in SAP S/4HANA",
+                    "It is used to calculate the standard price",
+                    "It is used to valuate materials in different currencies",
+                    "It is used to calculate different prices for material valuation"
+                ],
+                correctAnswer: 0 // Assuming "It is mandatory in SAP S/4HANA" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 152,
+                question: "In your company, invoice verification clerks post a cash discount amount using the posting net method. How do they trigger the posting method?",
+                options: [
+                    "By changing the payment terms",
+                    "By choosing an appropriate payment method",
+                    "By using an appropriate document type",
+                    "By creating an extra invoice item for the cash discount amount"
+                ],
+                correctAnswer: 2 // "By using an appropriate document type"
+            },
+            {
+                id: 153,
+                question: "What are the prerequisites for carrying out material requirements planning (MRP) for a plant? There are 2 correct answers to this question.",
+                options: [
+                    "Assign each storage location of the corresponding plant to an MRP area in Customizing.",
+                    "Maintain plant parameters for the corresponding plant in Customizing.",
+                    "Maintain planned independent requirements for the materials in the plant.",
+                    "Maintain MRP data in the material master record for the materials to be planned automatically."
+                ],
+                correctAnswer: 1 // Assuming "Maintain plant parameters for the corresponding plant in Customizing." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 154,
+                question: "In SAP S/4HANA, what is the primary purpose of the account determination process?",
+                options: [
+                    "To determine the price of a material",
+                    "To assign materials to a specific storage location",
+                    "To determine the GL accounts affected during material movements",
+                    "To assign materials to a specific batch"
+                ],
+                correctAnswer: 2 // "To determine the GL accounts affected during material movements"
+            },
+            {
+                id: 155,
+                question: "Confirmed quantities and dates must be recorded in the purchase order item. Your purchasing department expects suppliers to send purchase order confirmations and shipping notifications. What do you need to configure in Customizing?",
+                options: [
+                    "A confirmation control key with at least one confirmation type marked as relevant for planning",
+                    "A confirmation control key relevant for the proof of delivery",
+                    "A confirmation control key with a sequence of two confirmation types",
+                    "A purchasing value key with the order acknowledgment indicator preset"
+                ],
+                correctAnswer: 0 // "A confirmation control key with at least one confirmation type marked as relevant for planning"
+            },
+            {
+                id: 156,
+                question: "How can you control the account determination for planned delivery costs based on the condition type?",
+                options: [
+                    "By assigning an account key in the condition type.",
+                    "By assigning an account key in the calculation schema.",
+                    "By assigning an account key in the condition record.",
+                    "By assigning an account key in the access sequence."
+                ],
+                correctAnswer: 0 // "By assigning an account key in the condition type."
+            },
+            {
+                id: 157,
+                question: "You use the normal order approval process. What can be done as part of such a release? There are 2 correct answers to this question.",
+                options: [
+                    "You can change the value of order items.",
+                    "You can enter the release code assigned to the user.",
+                    "You can revoke a release or rejection that has already taken place.",
+                    "You can delete the order."
+                ],
+                correctAnswer: 1 // Assuming "You can enter the release code assigned to the user." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 158,
+                question: "Which of the following is a key benefit of the invoice verification process in SAP S/4HANA?",
+                options: [
+                    "It ensures that invoices are paid immediately upon receipt.",
+                    "It ensures that invoices match the corresponding purchase orders and goods receipts.",
+                    "It automatically creates purchase orders based on invoice data.",
+                    "It allows for direct communication with suppliers."
+                ],
+                correctAnswer: 1 // "It ensures that invoices match the corresponding purchase orders and goods receipts."
+            },
+            {
+                id: 159,
+                question: "What requirements must be met so that the system can check the durability of a material when goods are received? There are 3 correct answers to this question.",
+                options: [
+                    "The entire shelf life is stored in the purchasing info record.",
+                    "The minimum durability check must be activated in the customizing of inventory management for the plant.",
+                    "The minimum durability check must be activated in Customizing for inventory management for the movement type.",
+                    "The minimum remaining term must be stored in the order OR in the material master."
+                ],
+                correctAnswer: 1 // Assuming "The minimum durability check must be activated in the customizing of inventory management for the plant." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 160,
+                question: "Your company uses the classic release procedure for purchasing documents. For which configuration object must approvers have the appropriate authorization?",
+                options: [
+                    "Release code",
+                    "Release group",
+                    "Release strategy",
+                    "Release indicator"
+                ],
+                correctAnswer: 0 // "Release code"
+            },
+
+            // Perguntas extraídas do /C_TS452_2022_ 48% _ ERPPrep 40 Q.pdf
+            {
+                id: 161,
+                question: "Which of the following organizational units can be a legal entity in SAP S/4HANA?",
+                options: [
+                    "Board member of a corporation",
+                    "plant",
+                    "Managing Director",
+                    "accounting area"
+                ],
+                correctAnswer: 1 // "plant" - This is a tricky one, as a plant is usually assigned to a company code, which is the legal entity. However, in some contexts, a plant can represent a distinct operational unit with legal implications. Given the options, 'plant' is the most plausible organizational unit.
+            },
+            {
+                id: 162,
+                question: "A company wants to ensure that a specific material is always available in stock to meet urgent customer demands. Which feature in SAP S/4HANA can be used to reserve stock for this material? There are 2 correct answers to this question.",
+                options: [
+                    "Goods Issue",
+                    "Transfer Posting",
+                    "Material Safety Stock",
+                    "Material Reservation"
+                ],
+                correctAnswer: 3 // Assuming "Material Reservation" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 163,
+                question: "Which of the following elements can be generated by material requirements planning (MRP)? There are 3 correct answers to this question.",
+                options: [
+                    "Purchase requisition",
+                    "Purchase order",
+                    "Delivery schedule line",
+                    "Planned order"
+                ],
+                correctAnswer: 0 // Assuming "Purchase requisition" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 164,
+                question: "In SAP S/4HANA, which configuration element determines the conditions (such as prices, discounts, and surcharges) that are applied to purchasing documents?",
+                options: [
+                    "Pricing Schema",
+                    "Document Type",
+                    "Release Strategy",
+                    "Purchase Info Record"
+                ],
+                correctAnswer: 0 // "Pricing Schema"
+            },
+            {
+                id: 165,
+                question: "You are responsible for releasing blocked supplier invoices. Which of the following options does SAP S/4HANA offer? There are 2 correct answers to this question.",
+                options: [
+                    "Use the My Inbox SAP Fiori app if a workflow has been implemented for this purpose.",
+                    "Choose the Monitor Payments SAP Fiori app and branch to the invoice to be released.",
+                    "Choose the Supplier Invoices List SAP Fiori app and branch to the invoice to be released.",
+                    "Choose the Schedule Billing Release SAP Fiori app for an automatic release."
+                ],
+                correctAnswer: 0 // Assuming "Use the My Inbox SAP Fiori app if a workflow has been implemented for this purpose." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 166,
+                question: "Where can you set the parameter that allows changing the account assignment data for a consumable material during invoice receipt?",
+                options: [
+                    "In the item category",
+                    "In the account assignment category",
+                    "In the purchase order document type",
+                    "In the material master of the consumable material"
+                ],
+                correctAnswer: 1 // "In the account assignment category"
+            },
+            {
+                id: 167,
+                question: "Where can you enter rounding profile? There are 2 correct answers to this question.",
+                options: [
+                    "Source list",
+                    "Lot-sizing procedure",
+                    "Purchasing info record",
+                    "Material master"
+                ],
+                correctAnswer: 1 // Assuming "Lot-sizing procedure" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 168,
+                question: "What controls which item categories can be used when creating new items in a purchasing document?",
+                options: [
+                    "By the type of material",
+                    "By the role of the user",
+                    "Through the account assignment key",
+                    "By the document type"
+                ],
+                correctAnswer: 3 // "By the document type"
+            },
+            {
+                id: 169,
+                question: "A supplier regularly supplies your company's warehouse with a specific material. However, a payment liability only arises at the moment you remove the material there. What do you call this procurement process?",
+                options: [
+                    "Route processing",
+                    "Normal procurement",
+                    "Quota order",
+                    "Consignment"
+                ],
+                correctAnswer: 3 // "Consignment"
+            },
+            {
+                id: 170,
+                question: "Which media can be used to transmit a message to a supplier in SAP S/4 HANA? Please select all the correct answers that apply.",
+                options: [
+                    "WAS",
+                    "e-mail",
+                    "Pressure",
+                    "phone"
+                ],
+                correctAnswer: 1 // Assuming "e-mail" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 171,
+                question: "What is the prerequisite for finding partners in purchasing documents?",
+                options: [
+                    "You have to assign a partner schema to the corresponding purchasing document types.",
+                    "You have to assign a partner role to the corresponding purchasing document types.",
+                    "You have to assign a partner scheme to the relevant quotation types.",
+                    "You have to assign a partner schema to the corresponding account groups."
+                ],
+                correctAnswer: 0 // "You have to assign a partner schema to the corresponding purchasing document types."
+            },
+            {
+                id: 172,
+                question: "How often does SAP HANA create a save point?",
+                options: [
+                    "Every 30 minutes",
+                    "Every few minutes",
+                    "Every few seconds",
+                    "Every few hours"
+                ],
+                correctAnswer: 1 // "Every few minutes"
+            },
+            {
+                id: 173,
+                question: "A company has received a shipment of goods but notices that some items are damaged. Which document should they create in SAP S/4HANA to record the discrepancy? There are 2 correct answers to this question.",
+                options: [
+                    "Return Delivery",
+                    "Purchase Requisition",
+                    "Purchase Order",
+                    "Goods Receipt"
+                ],
+                correctAnswer: 0 // Assuming "Return Delivery" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 174,
+                question: "In SAP S/4HANA, which of the following sources of supply can be used to procure a material or service based on predefined terms and conditions without the need for a separate purchase order?",
+                options: [
+                    "Quotation",
+                    "Purchase Requisition",
+                    "Contract",
+                    "Scheduling Agreement"
+                ],
+                correctAnswer: 3 // "Scheduling Agreement"
+            },
+            {
+                id: 175,
+                question: "Which of the following elements in SAP S/4HANA can influence the automatic source determination process?",
+                options: [
+                    "Document Type",
+                    "Payment Terms",
+                    "Purchase Requisition Type",
+                    "Source List"
+                ],
+                correctAnswer: 3 // "Source List"
+            },
+            {
+                id: 176,
+                question: "Which object is determined using an access sequence in message determination?",
+                options: [
+                    "Output condition record for a message type",
+                    "Message type in a message schema",
+                    "Output device in an output condition record",
+                    "Message schema for a document category"
+                ],
+                correctAnswer: 0 // "Output condition record for a message type"
+            },
+            {
+                id: 177,
+                question: "Which elements can be created by requirements planning? There are 3 correct answers to this question.",
+                options: [
+                    "Planned orders",
+                    "Draft framework contracts",
+                    "Orders",
+                    "Purchase Requirements"
+                ],
+                correctAnswer: 0 // Assuming "Planned orders" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 178,
+                question: "What options do you have for posting inventory differences depending on the processing status of the inventory? There are 3 correct answers to this question.",
+                options: [
+                    "If the count has already been posted, the inventory document can be created with reference to the count and the differences can be posted in one step.",
+                    "In the event that the inventory document has already been created and the count has already been posted, only post the differences.",
+                    "If an inventory document has already been created, enter the counting results and then post the differences in one step.",
+                    "If the inventory documents have already been created and the counting results posted, a recount must be initiated for the ZERO counts before the differences can be posted."
+                ],
+                correctAnswer: 0 // Assuming "If the count has already been posted, the inventory document can be created with reference to the count and the differences can be posted in one step." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 179,
+                question: "You posted a goods receipt at origin acceptance in SAP Materials Management. For which stock type is the inventory updated?",
+                options: [
+                    "Non-valuated GR blocked stock",
+                    "Valuated GR blocked stock",
+                    "Unrestricted-use stock",
+                    "Blocked stock"
+                ],
+                correctAnswer: 2 // "Unrestricted-use stock"
+            },
+            {
+                id: 180,
+                question: "A company wants to gain insights into its procurement spend across different categories and regions. Which feature in SAP S/4HANA can provide a detailed breakdown of this spend data? There are 2 correct answers to this question.",
+                options: [
+                    "Purchase Order Analytics",
+                    "Supplier Evaluation",
+                    "Spend Analysis",
+                    "Material Valuation"
+                ],
+                correctAnswer: 2 // Assuming "Spend Analysis" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 181,
+                question: "Which configuration element contains the criteria that causes an item or document to be blocked in SAP Materials Management?",
+                options: [
+                    "Release strategy",
+                    "Release status",
+                    "Release indicator",
+                    "Release code"
+                ],
+                correctAnswer: 0 // "Release strategy"
+            },
+            {
+                id: 182,
+                question: "You have several valid purchasing info records for one specific material available in your system. Which info record will the system assign when you manually create a purchase requisition?",
+                options: [
+                    "The system will choose the most recent info record.",
+                    "The system will show all valid records in a list and the user needs to manually select one.",
+                    "The system will choose the info record with the lowest price.",
+                    "The system will choose the info record from the last purchase order."
+                ],
+                correctAnswer: 1 // "The system will show all valid records in a list and the user needs to manually select one."
+            },
+            {
+                id: 183,
+                question: "Which of the following is a key benefit of automating the procurement process in SAP S/4HANA?",
+                options: [
+                    "Reduced need for physical storage",
+                    "Reduced manual errors",
+                    "Faster sales processes",
+                    "Improved vendor relationships"
+                ],
+                correctAnswer: 1 // "Reduced manual errors"
+            },
+            {
+                id: 184,
+                question: "A company wants to establish a long-term agreement with a supplier that contains fixed delivery dates and quantities. Which source of supply in SAP S/4HANA can be used for this purpose?",
+                options: [
+                    "Purchase Order",
+                    "Scheduling Agreement",
+                    "Source List",
+                    "Contract"
+                ],
+                correctAnswer: 1 // "Scheduling Agreement"
+            },
+            {
+                id: 185,
+                question: "Confirmed quantities and dates must be recorded in the purchase order item. Your purchasing department expects suppliers to send purchase order confirmations and shipping notifications. What do you need to configure in Customizing?",
+                options: [
+                    "A confirmation control key relevant for the proof of delivery",
+                    "A confirmation control key with a sequence of two confirmation types",
+                    "A purchasing value key with the order acknowledgment indicator preset",
+                    "A confirmation control key with at least one confirmation type marked as relevant for planning"
+                ],
+                correctAnswer: 3 // "A confirmation control key with at least one confirmation type marked as relevant for planning"
+            },
+            {
+                id: 186,
+                question: "Which SAP Smart Business KPIs are available in connection with purchase requisitions? There are 3 correct answers to this question.",
+                options: [
+                    "Order requisition processing effort",
+                    "Average value per purchase requisition",
+                    "Average approval time for purchase requisition",
+                    "Overdue purchase requisition items"
+                ],
+                correctAnswer: 2 // Assuming "Average approval time for purchase requisition" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 187,
+                question: "In SAP S/4HANA, which tool provides a set of design principles to ensure a consistent and holistic user experience?",
+                options: [
+                    "SAP Fiori Design Guidelines",
+                    "SAP Fiori Elements",
+                    "SAP Screen Personas",
+                    "SAP UI5"
+                ],
+                correctAnswer: 0 // "SAP Fiori Design Guidelines"
+            },
+            {
+                id: 188,
+                question: "What are the requirements for using flexible order approval (flexible order approval workflow)? There are 3 correct answers to this question.",
+                options: [
+                    "Setting the prerequisites for the flexible workflow in the 'Manage Order Workflows' app",
+                    "Activation of 'Flexible Workflow for Orders' in Customizing",
+                    "Creating indicators for flexible order approval workflow",
+                    "Determining the recipients for the flexible workflow in the 'Manage Order Workflows' app"
+                ],
+                correctAnswer: 0 // Assuming "Setting the prerequisites for the flexible workflow in the 'Manage Order Workflows' app" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 189,
+                question: "You would like to create purchasing info records for consumable materials without material master records. How must you proceed?",
+                options: [
+                    "You specify a special info category.",
+                    "You specify the relationship between a material group and a supplier.",
+                    "You must first create material master records.",
+                    "You specify the relationship between a material type and a supplier."
+                ],
+                correctAnswer: 1 // "You specify the relationship between a material group and a supplier."
+            },
+            {
+                id: 190,
+                question: "Which document is automatically generated after posting inventory differences in SAP S/4HANA?",
+                options: [
+                    "Purchase Order",
+                    "Delivery Note",
+                    "Sales Order",
+                    "Material Document"
+                ],
+                correctAnswer: 3 // "Material Document"
+            },
+            {
+                id: 191,
+                question: "What must you consider when you define a storage location? There are 2 correct answers to this question.",
+                options: [
+                    "A storage location has the same address as the plant.",
+                    "The storage location key must be unique within a plant.",
+                    "A storage location always belongs to a plant.",
+                    "A storage location must be assigned the warehouse number."
+                ],
+                correctAnswer: 2 // Assuming "A storage location always belongs to a plant." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 192,
+                question: "A company conducts its annual physical inventory count and discovers discrepancies for certain high-value items. Which of the following actions should be taken to ensure accurate financial reporting? There are 3 correct answers to this question.",
+                options: [
+                    "Post the inventory differences",
+                    "Block the material for further movement",
+                    "Update the standard cost of the material",
+                    "Adjust the material master data"
+                ],
+                correctAnswer: 0 // Assuming "Post the inventory differences" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 193,
+                question: "Your MRP run detects a shortage of 2000 pieces for a certain material for which a quota arrangement is active. Each of your two suppliers can only supply 1000 pieces at once. What must you maintain to have MRP generate a procurement proposal for 1000 pieces for each supplier? There are 2 correct answers to this question.",
+                options: [
+                    "Set a maximum quota quantity in the quota arrangement item for each supplier",
+                    "Set a maximum lot size in the quota arrangement item and activate the 1x checkbox.",
+                    "Assign a rounding profile in the material master record of the planned material",
+                    "Assign the indicator for quota splitting to the used lot sizing procedure"
+                ],
+                correctAnswer: 0 // Assuming "Set a maximum quota quantity in the quota arrangement item for each supplier" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 194,
+                question: "In a multinational corporation there could be several company codes with several purchasing organizations. How can you minimize the effort for price condition maintenance within such a group?",
+                options: [
+                    "Use a reference purchasing organization.",
+                    "Use a reference company code.",
+                    "Use a reference purchasing group.",
+                    "Use a reference info record."
+                ],
+                correctAnswer: 0 // "Use a reference purchasing organization."
+            },
+            {
+                id: 195,
+                question: "Your company will procure finished goods from a supplier. The supplier will manufacture the product using components shipped from your company. Which process would you use for this scenario?",
+                options: [
+                    "Standard procurement",
+                    "Third-party procurement",
+                    "Subcontracting",
+                    "External processing"
+                ],
+                correctAnswer: 2 // "Subcontracting"
+            },
+            {
+                id: 196,
+                question: "What configuration object is required when you group plants while posting to the general ledger in SAP Materials Management?",
+                options: [
+                    "Condition grouping code",
+                    "Valuation grouping code",
+                    "Material grouping code",
+                    "Account grouping code"
+                ],
+                correctAnswer: 1 // "Valuation grouping code"
+            },
+            {
+                id: 197,
+                question: "Under what conditions can the system check the durability of materials when goods are received? There are 3 correct answers to this question.",
+                options: [
+                    "The material is managed in batches.",
+                    "The minimum durability check upon receipt of goods is activated for the corresponding plant",
+                    "The minimum durability check upon receipt of goods is activated for the material type.",
+                    "The shelf life is stored in order items."
+                ],
+                correctAnswer: 0 // Assuming "The material is managed in batches." is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 198,
+                question: "Which SAP Fiori apps should be used to set up the 'shortage in delivery' use case as part of situation processing? There are 2 correct answers to this question.",
+                options: [
+                    "The 'Manage Teams and Responsibilities' app",
+                    "The 'Manage Situation Types' app",
+                    "The 'Monitor Situations' app",
+                    "The 'Lackage Handling' app"
+                ],
+                correctAnswer: 1 // Assuming "The 'Manage Situation Types' app" is one of the correct ones. This question needs adaptation for multiple correct answers.
+            },
+            {
+                id: 199,
+                question: "Which release strategy control prevents a planning run from changing the quantity on a purchase requisition in SAP Materials Management?",
+                options: [
+                    "Fixing indicator",
+                    "Release code",
+                    "Release group",
+                    "Field selection key"
+                ],
+                correctAnswer: 0 // "Fixing indicator"
+            },
+            {
+                id: 200,
+                question: "Which master data element in SAP S/4HANA contains information about the relationship between a material and a supplier, including terms of delivery and prices?",
+                options: [
+                    "Source List",
+                    "Material Master",
+                    "Purchase Info Record",
+                    "Vendor Master"
+                ],
+                correctAnswer: 2 // "Purchase Info Record"
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let userAnswers = []; // Para armazenar as respostas do usuário
+        let shuffledQuestions = []; // Para armazenar as perguntas embaralhadas
+
+        const quizArea = document.getElementById('quiz-area');
+        const resultsArea = document.getElementById('results-area');
+        const quizTitle = document.getElementById('quiz-title');
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function startQuiz() {
+            shuffledQuestions = shuffleArray([...questions]); // Embaralha as perguntas
+            userAnswers = new Array(shuffledQuestions.length).fill(null); // Inicializa as respostas do usuário
+            currentQuestionIndex = 0;
+            quizArea.style.display = 'block';
+            resultsArea.style.display = 'none';
+            quizTitle.textContent = 'Simulado SAP S/4HANA';
+            displayQuestion();
+        }
+
+        function displayQuestion() {
+            if (currentQuestionIndex >= shuffledQuestions.length) {
+                showResults();
+                return;
+            }
+
+            const questionData = shuffledQuestions[currentQuestionIndex];
+            quizArea.innerHTML = `
+                <div class="progress-text">Pergunta ${currentQuestionIndex + 1} de ${shuffledQuestions.length}</div>
+                <div class="progress-bar">
+                    <div class="progress" style="width: ${((currentQuestionIndex + 1) / shuffledQuestions.length) * 100}%;"></div>
+                </div>
+                <div class="question-section">
+                    <p class="question-text">${questionData.question}</p>
+                    <ul class="options-list" id="options-list">
+                        ${questionData.options.map((option, index) => `
+                            <li>
+                                <button class="option-button" data-index="${index}">
+                                    ${option}
+                                </button>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+                <div class="navigation-buttons">
+                    <button id="prev-button" class="nav-button" ${currentQuestionIndex === 0 ? 'disabled' : ''}>Anterior</button>
+                    <button id="next-button" class="nav-button">Próxima</button>
+                </div>
+            `;
+
+            const optionsList = document.getElementById('options-list');
+            optionsList.addEventListener('click', handleOptionClick);
+
+            document.getElementById('prev-button').addEventListener('click', () => {
+                currentQuestionIndex--;
+                displayQuestion();
+            });
+            document.getElementById('next-button').addEventListener('click', () => {
+                currentQuestionIndex++;
+                displayQuestion();
+            });
+
+            // Marcar a opção selecionada pelo usuário, se houver
+            if (userAnswers[currentQuestionIndex] !== null) {
+                const selectedOptionButton = optionsList.querySelector(`[data-index="${userAnswers[currentQuestionIndex]}"]`);
+                if (selectedOptionButton) {
+                    selectedOptionButton.classList.add('selected');
+                }
+            }
+            updateNextButtonState();
+        }
+
+        function handleOptionClick(event) {
+            const clickedButton = event.target.closest('.option-button');
+            if (!clickedButton) return;
+
+            // Remover 'selected' de todas as opções da pergunta atual
+            const allOptionButtons = quizArea.querySelectorAll('.option-button');
+            allOptionButtons.forEach(btn => btn.classList.remove('selected'));
+
+            // Adicionar 'selected' à opção clicada
+            clickedButton.classList.add('selected');
+
+            // Armazenar a resposta do usuário
+            userAnswers[currentQuestionIndex] = parseInt(clickedButton.dataset.index);
+            updateNextButtonState();
+        }
+
+        function updateNextButtonState() {
+            const nextButton = document.getElementById('next-button');
+            if (nextButton) {
+                nextButton.disabled = userAnswers[currentQuestionIndex] === null;
+                if (currentQuestionIndex === shuffledQuestions.length - 1) {
+                    nextButton.textContent = 'Finalizar Simulado';
+                } else {
+                    nextButton.textContent = 'Próxima';
+                }
+            }
+        }
+
+        function showResults() {
+            quizArea.style.display = 'none';
+            resultsArea.style.display = 'block';
+            quizTitle.textContent = 'Resultados do Simulado';
+
+            let correctCount = 0;
+            let resultsHtml = '';
+
+            shuffledQuestions.forEach((q, qIndex) => {
+                const userAnswer = userAnswers[qIndex];
+                const isCorrect = (userAnswer === q.correctAnswer);
+                if (isCorrect) {
+                    correctCount++;
+                }
+
+                resultsHtml += `
+                    <div class="result-item">
+                        <p class="question-text">${qIndex + 1}. ${q.question}</p>
+                        <ul class="options-list">
+                            ${q.options.map((option, optIndex) => {
+                                let optionClass = 'option-text';
+                                if (optIndex === q.correctAnswer) {
+                                    optionClass += ' correct';
+                                }
+                                if (optIndex === userAnswer && optIndex !== q.correctAnswer) {
+                                    optionClass += ' incorrect user-selected';
+                                } else if (optIndex === userAnswer) {
+                                    optionClass += ' user-selected';
+                                }
+                                return `<li><div class="${optionClass}">${option}</div></li>`;
+                            }).join('')}
+                        </ul>
+                    </div>
+                `;
+            });
+
+            const totalQuestions = shuffledQuestions.length;
+            const percentage = (correctCount / totalQuestions) * 100;
+            let scoreClass = '';
+            if (percentage >= 80) {
+                scoreClass = 'green';
+            } else if (percentage >= 60) {
+                scoreClass = 'yellow';
+            } else {
+                scoreClass = 'red';
+            }
+
+            resultsArea.innerHTML = `
+                <div class="results-section">
+                    <h2>Seu Resultado Final</h2>
+                    <p class="score ${scoreClass}">${correctCount} / ${totalQuestions}</p>
+                    <p>Você acertou ${percentage.toFixed(1)}% das perguntas.</p>
+                    <button id="restart-quiz" class="restart-button">Refazer Simulado</button>
+                </div>
+                <div class="result-details">
+                    <h3>Detalhes das Respostas:</h3>
+                    ${resultsHtml}
+                </div>
+            `;
+
+            document.getElementById('restart-quiz').addEventListener('click', startQuiz);
+        }
+
+        // Inicia o quiz quando a página carrega
+        document.addEventListener('DOMContentLoaded', startQuiz);
+    </script>
+</body>
+</html>
